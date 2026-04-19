@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Melodic Grove",
+    "slug": "melodic-grove",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "melodicgrove",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#f5efe6"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.replaylab.melodicgrove"
+    },
+    "android": {
+      "package": "com.replaylab.melodicgrove"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
