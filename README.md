@@ -17,6 +17,23 @@ npx expo start
 Then scan the QR code with **Expo Go** on your phone, or press `w` to preview
 in a web browser.
 
+### Run in Docker
+
+No local Node install required:
+
+```bash
+docker build -t melodic-grove .
+docker run --rm -p 8081:8081 melodic-grove
+```
+
+Then open http://localhost:8081. The first build takes a few minutes (npm
+install inside the image); subsequent builds are cached. For live code
+changes during development, add a bind mount:
+
+```bash
+docker run --rm -p 8081:8081 -v "$PWD":/app -v /app/node_modules melodic-grove
+```
+
 ## Project layout
 
 ```
