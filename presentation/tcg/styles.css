@@ -1,0 +1,321 @@
+/* ============================================================
+   TCG Talent & Teams — Deck stylesheet
+   Editorial restraint + geometric signature moments
+   ============================================================ */
+
+:root {
+  --ink:    #0D3C4A;            /* deep teal — primary */
+  --ink-90: #124456;
+  --moss:   #0A4A3A;            /* deep green — secondary */
+  --moss-90:#0E5744;
+  --bone:   #F4F0E6;            /* warm off-white */
+  --bone-2: #EDE7D8;            /* warm off-white, one step darker */
+  --paper:  #FFFFFF;
+  --line:   rgba(13, 60, 74, 0.18);
+  --line-on-ink: rgba(244, 240, 230, 0.22);
+  --mute:   rgba(13, 60, 74, 0.55);
+  --mute-on-ink: rgba(244, 240, 230, 0.62);
+
+  --serif: "Source Serif 4", "Source Serif Pro", "Noto Serif", Georgia, serif;
+  --sans:  "Open Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: #000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Slide frame ────────────────────────────────────────────── */
+.slide {
+  background: var(--bone);
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--sans);
+}
+.slide--ink   { background: var(--ink);  color: var(--bone); }
+.slide--moss  { background: var(--moss); color: var(--bone); }
+.slide--paper { background: var(--paper); }
+
+/* The content grid — everything authored in absolute coords is
+   fine, but we use a consistent padding scaffold. */
+.frame {
+  position: absolute;
+  inset: 0;
+  padding: 96px 120px 80px 120px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* ── Eyebrow / meta ─────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.slide--ink  .eyebrow,
+.slide--moss .eyebrow { color: var(--bone); }
+
+.eyebrow-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.eyebrow-mark::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.85;
+}
+
+/* ── Typography primitives ─────────────────────────────────── */
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 112px;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.display--s  { font-size: 88px; }
+.display--xs { font-size: 68px; }
+.italic { font-style: italic; }
+
+.lede {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+  margin: 0;
+  text-wrap: pretty;
+}
+.lede--italic { font-style: italic; }
+
+.body {
+  font-family: var(--sans);
+  font-size: 26px;
+  line-height: 1.45;
+  font-weight: 400;
+  letter-spacing: 0.002em;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: pretty;
+}
+.slide--ink  .body,
+.slide--moss .body { color: var(--bone); }
+
+.body--mute { color: var(--mute); }
+.slide--ink  .body--mute,
+.slide--moss .body--mute { color: var(--mute-on-ink); }
+
+.small {
+  font-family: var(--sans);
+  font-size: 22px;
+  line-height: 1.45;
+  font-weight: 400;
+  margin: 0;
+}
+
+.tag {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ── Footer (parallel across every slide) ──────────────────── */
+.footer {
+  position: absolute;
+  left: 120px;
+  right: 120px;
+  bottom: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--sans);
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+  font-weight: 500;
+}
+.slide--ink  .footer,
+.slide--moss .footer { color: var(--mute-on-ink); }
+
+.footer .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  opacity: 0.7;
+  border-radius: 999px;
+  margin: 0 14px;
+  vertical-align: middle;
+}
+
+/* ── Hairlines ──────────────────────────────────────────────── */
+.rule {
+  height: 1px;
+  background: var(--line);
+  width: 100%;
+}
+.slide--ink  .rule,
+.slide--moss .rule { background: var(--line-on-ink); }
+
+/* ── The trapezoid — SVG mask shape reusable as background ─── */
+.tz {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+}
+.tz svg { display: block; width: 100%; height: 100%; }
+
+/* ── Layouts ────────────────────────────────────────────────── */
+.col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+.col-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 64px; }
+.col-12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: 32px; }
+
+.stack-s  { display: flex; flex-direction: column; gap: 20px; }
+.stack    { display: flex; flex-direction: column; gap: 32px; }
+.stack-l  { display: flex; flex-direction: column; gap: 52px; }
+
+/* ── Numbered cards (methodology) ──────────────────────────── */
+.numbered-card {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-right: 24px;
+}
+.numbered-card .roman {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 88px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.slide--ink  .numbered-card .roman,
+.slide--moss .numbered-card .roman { color: var(--bone); }
+
+.numbered-card .rule { margin: 4px 0 0 0; }
+
+/* ── Stat block ─────────────────────────────────────────────── */
+.stat .num {
+  font-family: var(--serif);
+  font-size: 260px;
+  line-height: 0.88;
+  letter-spacing: -0.035em;
+  font-weight: 400;
+  color: var(--ink);
+}
+.slide--ink .stat .num,
+.slide--moss .stat .num { color: var(--bone); }
+
+/* ── Chips / labels ─────────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 18px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink);
+}
+.slide--ink .pill,
+.slide--moss .pill {
+  color: var(--bone);
+  border-color: var(--line-on-ink);
+}
+
+/* ── Background “scenery” — outsize trapezoids ─────────────── */
+.scenery {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Utility */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.nowrap { white-space: nowrap; }
+.right { text-align: right; }
+.center { text-align: center; }
+.u-mute { color: var(--mute); }
+.slide--ink .u-mute, .slide--moss .u-mute { color: var(--mute-on-ink); }
+
+/* Hide the native scrollbar gutter in case any slide overflows slightly. */
+.slide * { -webkit-font-smoothing: antialiased; }
+
+/* ── Terrain imagery (generated via CSS) ───────────────────── */
+/* We don't have real photography so we draw architectural
+   contour-line terrain using layered radial gradients +
+   SVG topographic lines. Used only as a subtle backdrop. */
+.terrain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(13,60,74,0.10), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 75%, rgba(10,74,58,0.10), transparent 60%);
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+}
+.slide--ink  .terrain,
+.slide--moss .terrain { mix-blend-mode: screen; opacity: 0.28; }
+
+/* ── Case study metric grid ─────────────────────────────────── */
+.triad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.slide--ink .triad,
+.slide--moss .triad { border-color: var(--line-on-ink); }
+.triad > div {
+  padding: 36px 40px 36px 0;
+  border-right: 1px solid var(--line);
+}
+.slide--ink .triad > div,
+.slide--moss .triad > div { border-right-color: var(--line-on-ink); }
+.triad > div:last-child { border-right: none; padding-right: 0; }
+.triad .label {
+  font-size: 18px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ── Quote / callout ────────────────────────────────────────── */
+.pullquote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 64px;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
