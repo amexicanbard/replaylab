@@ -6,19 +6,25 @@ delivery to CEOs and boards.
 
 ## Open the deck
 
-The deck is a self-contained static site (HTML + CSS + JS).
+Two ways to open, same deck either way:
 
-**Quick way:** double-click `TCG General Presentation.html` to open it
-in your default browser.
+**Easiest — single-file bundle.** Double-click
+`TCG General Presentation - bundled.html`. CSS and JS are inlined,
+so it runs anywhere you drop it (email attachment, USB stick, etc.)
+as long as you have internet for the fonts.
 
-**Recommended (avoids `file://` quirks):**
+**Source version.** Double-click `TCG General Presentation.html` —
+this one loads `styles.css` and `deck-stage.js` from the same folder.
+
+**Recommended for either version (avoids `file://` quirks):**
 
 ```bash
 cd presentation/tcg
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000/TCG%20General%20Presentation.html>.
+Then open <http://localhost:8000/TCG%20General%20Presentation.html>
+or <http://localhost:8000/TCG%20General%20Presentation%20-%20bundled.html>.
 
 > Fonts (Source Serif 4, Open Sans) load from Google Fonts — present
 > with an internet connection.
@@ -48,10 +54,11 @@ The deck remembers your slide on refresh (localStorage).
 ## Files
 
 ```
-TCG General Presentation.html   the deck (11 slides)
-styles.css                      design system (palette, type, layouts)
-deck-stage.js                   <deck-stage> web component (nav, scaling, persistence)
-assets/                         brand logo PNG variants
+TCG General Presentation.html            the deck (11 slides) — loads external CSS/JS
+TCG General Presentation - bundled.html  same deck, CSS + JS inlined — single file
+styles.css                               design system (palette, type, layouts)
+deck-stage.js                            <deck-stage> web component (nav, scaling, persistence)
+assets/                                  brand logo PNG variants
 ```
 
 The deck is authored at 1920×1080. `<deck-stage>` auto-scales it
