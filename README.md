@@ -50,3 +50,9 @@ src/
 ## Status
 
 Mechanics-only prototype. No custom art, sound, or animations yet.
+
+## TCG presentation
+
+This repo also hosts an unrelated standalone deck under
+[`presentation/tcg/`](presentation/tcg/README.md) — an 11-slide HTML
+executive presentation for TCG Talent & Teams.
