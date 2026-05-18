@@ -1,52 +1,125 @@
-# Melodic Grove
+# Interactive Map App
 
-A Catholic virtue-tracking RPG for mobile. Built with Expo + React Native.
+A Genially-style interactive image map. An **admin** uploads a custom
+background image, places clickable pins and toggleable layers on top of it, and
+**viewers** access it via a password-protected page to explore the content.
 
-**Objective:** grow in holiness by completing daily and monthly quests tied to
-real-life virtuous actions. Level up the four Cardinal and three Theological
-virtues (plus the seven Heavenly virtues), resist the seven Deadly Sins, unlock
-saints as companions, and use the sacraments as active abilities.
+- **Frontend:** React + Vite + Tailwind CSS
+- **Backend:** Node.js + Express
+- **Storage:** JSON file (`data/map-data.json`) + uploaded images in `uploads/`
+- No database required.
 
-## Getting started
+## Modes
+
+| Mode | Route | Capabilities |
+| --- | --- | --- |
+| **User** | `/` | Password-protected. Click pins to read content, toggle layers, zoom & pan. Read-only. |
+| **Admin** | `/admin` | Password-protected. Upload a background image, place/drag/edit/delete pins, create layers, preview layer visibility. |
+
+## Project structure
+
+```
+client/        React frontend (Vite)
+server/        Express backend + REST API
+uploads/       Stored background images
+data/          map-data.json (persisted map state)
+.env           Passwords & port (you create this)
+```
+
+## Setup
+
+### 1. Configure passwords
+
+Copy the example env file and edit the values:
 
 ```bash
-npm install
-npx expo start
+cp .env.example .env
 ```
 
-Then scan the QR code with **Expo Go** on your phone, or press `w` to preview
-in a web browser.
+```ini
+ADMIN_PASSWORD=your-admin-password
+VIEWER_PASSWORD=your-viewer-password
+PORT=4000
+```
 
-### Run in Docker
+The `.env` file lives at the **project root** and is read by the server.
+The admin password also works for entering User Mode.
 
-No local Node install required:
+### 2. Install dependencies
 
 ```bash
-docker build -t melodic-grove .
-docker run --rm -p 8081:8081 melodic-grove
+npm run install:all
 ```
 
-Then open http://localhost:8081. The first build takes a few minutes (npm
-install inside the image); subsequent builds are cached. For live code
-changes during development, add a bind mount:
+This installs the root tooling plus `server/` and `client/` dependencies.
+(Equivalent: `npm install && npm install --prefix server && npm install --prefix client`.)
+
+### 3. Run locally
+
+Start both the API and the frontend together:
 
 ```bash
-docker run --rm -p 8081:8081 -v "$PWD":/app -v /app/node_modules melodic-grove
+npm run dev
 ```
 
-## Project layout
+- Frontend: http://localhost:5173
+- API:      http://localhost:4000
 
+The Vite dev server proxies `/api` and `/uploads` to the backend, so you only
+need to open the frontend URL.
+
+To run them separately:
+
+```bash
+npm run server   # Express API only
+npm run client   # Vite dev server only
 ```
-app/                 # expo-router screens (file-based routing)
-  (tabs)/            # main tab navigator
-  onboarding.tsx     # first-run "Baptism"
-src/
-  data/              # static game data (virtues, sins, saints, quests, sacraments)
-  store/             # Zustand store with AsyncStorage persistence
-  game/              # pure game logic (progression, quest engine, sin decay, saint unlocks)
-  components/        # reusable UI pieces
+
+## Usage
+
+1. Open http://localhost:5173/admin and sign in with the **admin password**.
+2. Upload a background image.
+3. Click **+ Add pin**, then click anywhere on the map to drop a pin. Fill in
+   the title, description (Markdown supported), optional image/link, and assign
+   layers.
+4. Drag pins to reposition them; click a pin to edit it.
+5. Create layers and toggle them to preview what viewers will see.
+6. All changes save automatically to `data/map-data.json`.
+7. Open http://localhost:5173/ and sign in with the **viewer password** to use
+   the read-only experience.
+
+## Production build
+
+```bash
+npm run build              # builds client/dist
+npm --prefix server start  # runs the API
 ```
 
-## Status
+Serve `client/dist` with any static host (point its `/api` and `/uploads`
+requests at the running Express server).
 
-Mechanics-only prototype. No custom art, sound, or animations yet.
+## Data model (`data/map-data.json`)
+
+```json
+{
+  "backgroundImage": "uploads/map.jpg",
+  "layers": [
+    { "id": "layer-1", "name": "Layer Name", "visible": true }
+  ],
+  "pins": [
+    {
+      "id": "pin-1",
+      "x": 45.2,
+      "y": 30.8,
+      "title": "Pin Title",
+      "description": "Markdown content",
+      "imageUrl": "",
+      "linkUrl": "",
+      "layers": ["layer-1"]
+    }
+  ]
+}
+```
+
+Pin coordinates `x`/`y` are percentages of the image width/height, so pins stay
+correctly placed across screen sizes.

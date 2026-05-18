@@ -1,19 +1,10 @@
 node_modules/
-.expo/
 dist/
-web-build/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-.DS_Store
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-expo-env.d.ts
 .env
 .env.local
-ios/
-android/
+*.log
+.DS_Store
+
+# Uploaded background images (keep the folder, ignore contents)
+uploads/*
+!uploads/.gitkeep
