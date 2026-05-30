@@ -16,7 +16,18 @@ const DATA_DIR = path.join(ROOT, 'data');
 const UPLOADS_DIR = path.join(ROOT, 'uploads');
 const DATA_FILE = path.join(DATA_DIR, 'map-data.json');
 
-const DEFAULT_MAP = { backgroundImage: '', layers: [], pins: [] };
+const DEFAULT_PIN_TYPES = [
+  { id: 'type-battle', name: 'Battle', icon: '⚔️', color: '#dc2626' },
+  { id: 'type-town', name: 'Town', icon: '🏠', color: '#16a34a' },
+  { id: 'type-event', name: 'Event', icon: '★', color: '#eab308' },
+  { id: 'type-poi', name: 'Point of Interest', icon: '📍', color: '#2563eb' },
+];
+const DEFAULT_MAP = {
+  backgroundImage: '',
+  layers: [],
+  pinTypes: DEFAULT_PIN_TYPES,
+  pins: [],
+};
 
 for (const dir of [DATA_DIR, UPLOADS_DIR]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -89,6 +100,7 @@ app.put('/api/map', auth(['admin']), (req, res) => {
     backgroundImage:
       typeof body.backgroundImage === 'string' ? body.backgroundImage : '',
     layers: Array.isArray(body.layers) ? body.layers : [],
+    pinTypes: Array.isArray(body.pinTypes) ? body.pinTypes : [],
     pins: Array.isArray(body.pins) ? body.pins : [],
   };
   writeMap(map);

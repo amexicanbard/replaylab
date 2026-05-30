@@ -1,13 +1,21 @@
 import { useState } from 'react';
 import Modal from './Modal.jsx';
 
-export default function PinEditor({ pin, layers, onSave, onDelete, onClose }) {
+export default function PinEditor({
+  pin,
+  layers,
+  pinTypes = [],
+  onSave,
+  onDelete,
+  onClose,
+}) {
   const [form, setForm] = useState({
     title: pin.title || '',
     description: pin.description || '',
     imageUrl: pin.imageUrl || '',
     linkUrl: pin.linkUrl || '',
     layers: pin.layers || [],
+    typeId: pin.typeId || '',
   });
 
   function update(field, value) {
@@ -31,6 +39,37 @@ export default function PinEditor({ pin, layers, onSave, onDelete, onClose }) {
     <Modal onClose={onClose}>
       <div className="p-6">
         <h2 className="text-lg font-bold text-slate-800">Edit pin</h2>
+
+        {pinTypes.length > 0 && (
+          <>
+            <p className="mt-4 text-sm font-medium text-slate-700">Type</p>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {pinTypes.map((t) => {
+                const active = form.typeId === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => update('typeId', t.id)}
+                    style={
+                      active
+                        ? { backgroundColor: t.color, borderColor: t.color }
+                        : undefined
+                    }
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition ${
+                      active
+                        ? 'text-white'
+                        : 'border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+                    }`}
+                  >
+                    <span>{t.icon}</span>
+                    <span>{t.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         <label className="mt-4 block text-sm font-medium text-slate-700">
           Title

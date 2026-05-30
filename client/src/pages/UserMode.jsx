@@ -89,6 +89,27 @@ function Viewer() {
             })}
           </div>
         )}
+        {(map.pinTypes || []).length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs uppercase tracking-wide text-slate-400">
+              Legend
+            </span>
+            {map.pinTypes.map((t) => (
+              <span
+                key={t.id}
+                className="flex items-center gap-1 rounded-full bg-slate-700/70 px-2 py-0.5 text-xs"
+              >
+                <span
+                  className="flex h-4 w-4 items-center justify-center rounded-full border border-white/60 text-[10px]"
+                  style={{ backgroundColor: t.color }}
+                >
+                  {t.icon}
+                </span>
+                <span>{t.name}</span>
+              </span>
+            ))}
+          </div>
+        )}
         <div className="ml-auto flex items-center gap-3 text-sm">
           <span className="hidden text-slate-400 sm:inline">
             Scroll / pinch to zoom · drag to pan

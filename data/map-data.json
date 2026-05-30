@@ -1,5 +1,11 @@
 {
   "backgroundImage": "",
   "layers": [],
+  "pinTypes": [
+    { "id": "type-battle", "name": "Battle", "icon": "⚔️", "color": "#dc2626" },
+    { "id": "type-town", "name": "Town", "icon": "🏠", "color": "#16a34a" },
+    { "id": "type-event", "name": "Event", "icon": "★", "color": "#eab308" },
+    { "id": "type-poi", "name": "Point of Interest", "icon": "📍", "color": "#2563eb" }
+  ],
   "pins": []
 }

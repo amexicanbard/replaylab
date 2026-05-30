@@ -19,10 +19,12 @@ function Editor() {
   const [map, setMap] = useState(null);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('saved'); // saved | saving | error
-  const [addMode, setAddMode] = useState(false);
+  const [addTypeId, setAddTypeId] = useState(null); // null = not adding
   const [editingPin, setEditingPin] = useState(null);
   const [newLayerName, setNewLayerName] = useState('');
+  const [newType, setNewType] = useState({ name: '', icon: '', color: '#6366f1' });
   const firstRun = useRef(true);
+  const addMode = addTypeId !== null;
 
   useEffect(() => {
     getMap()
@@ -101,6 +103,44 @@ function Editor() {
     }));
   }
 
+  function addPinType() {
+    const name = newType.name.trim();
+    if (!name) return;
+    setMap((m) => ({
+      ...m,
+      pinTypes: [
+        ...(m.pinTypes || []),
+        {
+          id: uid('type'),
+          name,
+          icon: newType.icon.trim() || '•',
+          color: newType.color,
+        },
+      ],
+    }));
+    setNewType({ name: '', icon: '', color: '#6366f1' });
+  }
+
+  function updatePinType(id, patch) {
+    setMap((m) => ({
+      ...m,
+      pinTypes: (m.pinTypes || []).map((t) =>
+        t.id === id ? { ...t, ...patch } : t
+      ),
+    }));
+  }
+
+  function deletePinType(id) {
+    setMap((m) => ({
+      ...m,
+      pinTypes: (m.pinTypes || []).filter((t) => t.id !== id),
+      pins: m.pins.map((p) =>
+        p.typeId === id ? { ...p, typeId: '' } : p
+      ),
+    }));
+    if (addTypeId === id) setAddTypeId(null);
+  }
+
   function placePin({ x, y }) {
     const pin = {
       id: uid('pin'),
@@ -111,9 +151,10 @@ function Editor() {
       imageUrl: '',
       linkUrl: '',
       layers: [],
+      typeId: addTypeId || '',
     };
     setMap((m) => ({ ...m, pins: [...m.pins, pin] }));
-    setAddMode(false);
+    setAddTypeId(null);
     setEditingPin(pin);
   }
 
@@ -210,21 +251,147 @@ function Editor() {
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               Pins ({map.pins.length})
             </p>
-            <button
-              type="button"
-              disabled={!map.backgroundImage}
-              onClick={() => setAddMode((v) => !v)}
-              className={`mt-2 w-full rounded-lg px-3 py-2 text-sm font-semibold transition disabled:opacity-50 ${
-                addMode
-                  ? 'bg-rose-600 text-white hover:bg-rose-700'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
-              }`}
-            >
-              {addMode ? 'Click the map to place… (cancel)' : '+ Add pin'}
-            </button>
-            <p className="mt-1 text-xs text-slate-400">
+            {!map.backgroundImage ? (
+              <p className="mt-2 text-xs italic text-slate-400">
+                Upload a background image to start placing pins.
+              </p>
+            ) : (map.pinTypes || []).length === 0 ? (
+              <p className="mt-2 text-xs italic text-slate-400">
+                Create at least one pin type below to start placing pins.
+              </p>
+            ) : (
+              <>
+                <p className="mt-2 text-xs text-slate-500">
+                  Choose a type, then click the map to drop a pin.
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-1.5">
+                  {(map.pinTypes || []).map((t) => {
+                    const active = addTypeId === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() =>
+                          setAddTypeId((cur) => (cur === t.id ? null : t.id))
+                        }
+                        style={
+                          active
+                            ? { backgroundColor: t.color, borderColor: t.color }
+                            : undefined
+                        }
+                        className={`flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-sm transition ${
+                          active
+                            ? 'text-white shadow-sm'
+                            : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400'
+                        }`}
+                        title={active ? 'Cancel placement' : `Add a ${t.name}`}
+                      >
+                        <span>{t.icon}</span>
+                        <span className="truncate">{t.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {addMode && (
+                  <p className="mt-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-900">
+                    Click anywhere on the map to drop the pin. Click the
+                    selected type again to cancel.
+                  </p>
+                )}
+              </>
+            )}
+            <p className="mt-2 text-xs text-slate-400">
               Drag any pin to reposition it. Click a pin to edit.
             </p>
+          </section>
+
+          {/* Pin types */}
+          <section className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Pin types
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {(map.pinTypes || []).length === 0 && (
+                <li className="text-xs italic text-slate-400">
+                  No pin types yet.
+                </li>
+              )}
+              {(map.pinTypes || []).map((t) => (
+                <li
+                  key={t.id}
+                  className="flex items-center gap-2 rounded-lg bg-slate-50 px-2 py-1.5"
+                >
+                  <span
+                    className="flex h-6 w-6 items-center justify-center rounded-full border border-white text-sm shadow-sm"
+                    style={{ backgroundColor: t.color }}
+                  >
+                    {t.icon}
+                  </span>
+                  <input
+                    value={t.name}
+                    onChange={(e) =>
+                      updatePinType(t.id, { name: e.target.value })
+                    }
+                    className="min-w-0 flex-1 rounded border border-transparent bg-transparent px-1 text-sm text-slate-700 outline-none focus:border-slate-300 focus:bg-white"
+                  />
+                  <input
+                    type="color"
+                    value={t.color}
+                    onChange={(e) =>
+                      updatePinType(t.id, { color: e.target.value })
+                    }
+                    className="h-6 w-6 cursor-pointer rounded border border-slate-300 bg-white p-0"
+                    title="Color"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => deletePinType(t.id)}
+                    className="text-xs text-slate-400 hover:text-rose-600"
+                    title="Delete type"
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-3 flex items-center gap-1.5">
+              <input
+                value={newType.icon}
+                onChange={(e) =>
+                  setNewType((s) => ({ ...s, icon: e.target.value }))
+                }
+                placeholder="★"
+                maxLength={4}
+                className="w-10 rounded-lg border border-slate-300 px-2 py-1.5 text-center text-sm outline-none focus:border-indigo-500"
+                title="Icon (emoji or character)"
+              />
+              <input
+                value={newType.name}
+                onChange={(e) =>
+                  setNewType((s) => ({ ...s, name: e.target.value }))
+                }
+                onKeyDown={(e) => e.key === 'Enter' && addPinType()}
+                placeholder="New type name"
+                className="min-w-0 flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+              />
+              <input
+                type="color"
+                value={newType.color}
+                onChange={(e) =>
+                  setNewType((s) => ({ ...s, color: e.target.value }))
+                }
+                className="h-9 w-9 cursor-pointer rounded-lg border border-slate-300 bg-white p-0"
+                title="Color"
+              />
+              <button
+                type="button"
+                onClick={addPinType}
+                className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700"
+              >
+                Add
+              </button>
+            </div>
           </section>
 
           {/* Layers */}
@@ -321,6 +488,7 @@ function Editor() {
         <PinEditor
           pin={editingPin}
           layers={map.layers}
+          pinTypes={map.pinTypes || []}
           onSave={savePin}
           onDelete={deletePin}
           onClose={() => setEditingPin(null)}
